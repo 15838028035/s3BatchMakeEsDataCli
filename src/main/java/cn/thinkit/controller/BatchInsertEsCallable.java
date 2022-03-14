@@ -1,5 +1,6 @@
 package cn.thinkit.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -19,15 +20,17 @@ public class BatchInsertEsCallable  implements Callable<List<PhoneDataInfoBO>> {
 	  
 	  private  int delayForNextThreadInMillis;
 	  
+	  private int minLoopTime;
 	  
 	public BatchInsertEsCallable( RestHighLevelClient restHighLevelClient, String index,
-			String type, List<PhoneDataInfoBO> phoneDataInfoBOList, int delayForNextThreadInMillis) {
+			String type, List<PhoneDataInfoBO> phoneDataInfoBOList, int delayForNextThreadInMillis , int minLoopTime) {
 		super();
 		this.restHighLevelClient = restHighLevelClient;
 		this.index = index;
 		this.type = type;
 		this.phoneDataInfoBOList = phoneDataInfoBOList;
 		 this.delayForNextThreadInMillis = delayForNextThreadInMillis;
+		 this.minLoopTime = minLoopTime;
 	}
 
     @Override
@@ -42,13 +45,13 @@ public class BatchInsertEsCallable  implements Callable<List<PhoneDataInfoBO>> {
 	            }
 	        }
 		    
-			return EsCurd.bulkInsertBulkResponse(restHighLevelClient, index, type, phoneDataInfoBOList);
+			return EsCurd.bulkInsertBulkResponse(restHighLevelClient, index, type, phoneDataInfoBOList, minLoopTime);
 			
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return Collections.emptyList();          
 		
 	}
 	

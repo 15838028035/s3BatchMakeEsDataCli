@@ -22,9 +22,9 @@ public class GenerateSequenceUtil {
     private static final FieldPosition HELPER_POSITION = new FieldPosition(0);
     
     /** 时间：精确到秒 */
-    private final static Format dateFormat = new SimpleDateFormat("YYYYMMddHHmmss");
+    private static final  Format dateFormat = new SimpleDateFormat("YYYYMMddHHmmss");
     
-    private final static NumberFormat numberFormat = new DecimalFormat("00000");
+    private static final  NumberFormat numberFormat = new DecimalFormat("00000");
     
     private static AtomicInteger seq =  new AtomicInteger(0);
      

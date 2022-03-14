@@ -38,8 +38,7 @@ public class DateFormatUtil {
     public static String DateToStr(Date date) {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String str = format.format(date);
-        return str;
+        return format.format(date);
     }
 
     /**
@@ -320,8 +319,7 @@ public class DateFormatUtil {
         c1.setTime(date1);
         c2.setTime(date2);
 
-        int years = c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR);
-        return years;
+        return c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR);
     }
 
     /**
@@ -345,12 +343,6 @@ public class DateFormatUtil {
         calendar.set(addType, calendar.get(addType) + addNum);
         Date now = calendar.getTime();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String str = format.format(now);
-        return str;
+        return  format.format(now);
     }
-
-    public static void main(String[] args) {
-        System.out.println(DateFormatUtil.addMinute(new Date(), -5));
-    }
-
 }

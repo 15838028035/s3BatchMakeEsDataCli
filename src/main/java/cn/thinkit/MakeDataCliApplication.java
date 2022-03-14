@@ -2,17 +2,13 @@ package cn.thinkit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.elasticsearch.client.RestHighLevelClient;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.thinkit.config.ConfigProp;
@@ -42,16 +38,6 @@ public class MakeDataCliApplication {
     	GLogger.info("===============================");
     	GLogger.info("====ES 多线程压测客户端 V1.0.1===");
     	GLogger.info("===============================");
-    	
-        ServiceLoader<JsonFactory> jsonFactories = ServiceLoader.load(JsonFactory.class);
-        
-        Iterator it = jsonFactories.iterator();
-        
-        while(it.hasNext()) {
-        	JsonFactory jsonFactory = (JsonFactory) it.next();
-        	 GLogger.info("批量设置json信息 jsonFactory.disable(JsonFactory.Feature.INTERN_FIELD_NAMES)");
-        	jsonFactory.disable(JsonFactory.Feature.INTERN_FIELD_NAMES);
-        }
     	
     	ApplicationProperties.reload();
     	MakeDataCliApplication.configProp = (ConfigProp) ApplicationProperties.getProperties().get("configProp");
@@ -85,25 +71,23 @@ public class MakeDataCliApplication {
             ObjectMapper mapper = new ObjectMapper(MyJsonFactory.factory);
             PhoneDataInfoBO phoneDataInfoBO = mapper.readValue(phoneStr, PhoneDataInfoBO.class);
             
-            PhoneDataInfoBO phoneDataInfoBO2 = phoneDataInfoBO;
-            
-           int MIN_LOOP_TIME = 0;
+           int minLoopTime = 0;
         
-           int MAX_LOOP_TIME = 100;
+           int maxLoopTime = 100;
             
             long startTime = System.currentTimeMillis();
             
             GLogger.info("开始进行批量生成压测数据");
            
-           while( MIN_LOOP_TIME< MAX_LOOP_TIME) {
+           while( minLoopTime< maxLoopTime) {
         	   
-               batchMakeData5Loop(phoneDataInfoBO,phoneDataInfoBO2,restHighLevelClient,MIN_LOOP_TIME);
+               batchMakeData5Loop(phoneDataInfoBO,restHighLevelClient,minLoopTime);
                
               /** 
     		  * 监控线程执行情况
     		  */
         	    monitor((ThreadPoolExecutor) executorService);
-               MIN_LOOP_TIME ++;
+        	    minLoopTime ++;
            }
         
            GLogger.info("结束进行批量生成{}条测试数据",100000);
@@ -130,14 +114,7 @@ public class MakeDataCliApplication {
         
         while (!isTerminated(executor)) {
             try {
-                int queueSize = executor.getQueue().size();
-                int activeCount = executor.getActiveCount();
-                long completedTaskCount = executor.getCompletedTaskCount();
-                long taskCount = executor.getTaskCount();
-
-             //   GLogger.info("当前排队线程数：{}，当前活动线程数：{}，执行完成线程数：{}，总线程数：{}", queueSize, activeCount, completedTaskCount, taskCount);
-
-                Thread.sleep(1000*20);
+                Thread.sleep(20000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -149,30 +126,32 @@ public class MakeDataCliApplication {
      * @Version: 1.0
      */
     public static boolean isTerminated(ThreadPoolExecutor executor) {
-        return executor.getQueue().size() == 0 && executor.getActiveCount() == 0;
+        return executor.getQueue().isEmpty() && executor.getActiveCount() == 0;
     }
     
-    public static  void batchMakeData5Loop(PhoneDataInfoBO phoneDataInfoBO, PhoneDataInfoBO phoneDataInfoBO2, RestHighLevelClient restHighLevelClient,int MIN_LOOP_TIME) {
-        GLogger.info("开始进行第{}次批量生成压测数据",MIN_LOOP_TIME);
+    public static  void batchMakeData5Loop(PhoneDataInfoBO phoneDataInfoBO, RestHighLevelClient restHighLevelClient,int minLoopTime) {
+        GLogger.info("开始进行第{}次批量生成压测数据",minLoopTime);
+        
+        PhoneDataInfoBO phoneDataInfoBO2My = new PhoneDataInfoBO();
         for(int i=0; i<10000; i++) {
             String uuid = GenerateSequenceUtil.generateSequenceNo()+String.valueOf(i);
            
-            phoneDataInfoBO2 = new PhoneDataInfoBO();
+            phoneDataInfoBO2My = new PhoneDataInfoBO();
             
             try {
-				BeanUtils.copyProperties(phoneDataInfoBO2, phoneDataInfoBO);
+				BeanUtils.copyProperties(phoneDataInfoBO2My, phoneDataInfoBO);
 			} catch (IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
             
-            phoneDataInfoBO2.setSerialNumber(uuid);
-            phoneDataInfoBO2.getAudioList().get(0).setAudioNumber(uuid+"_01");
+            phoneDataInfoBO2My.setSerialNumber(uuid);
+            phoneDataInfoBO2My.getAudioList().get(0).setAudioNumber(uuid+"_01");
             
-            putDataAndSend(restHighLevelClient, phoneDataInfoBO2);
+            putDataAndSend(restHighLevelClient, phoneDataInfoBO2My, minLoopTime);
         }
     }
     
-    public  static  void putDataAndSend(RestHighLevelClient restHighLevelClient,PhoneDataInfoBO phoneDataInfoBO) {
+    public  static  void putDataAndSend(RestHighLevelClient restHighLevelClient,PhoneDataInfoBO phoneDataInfoBO, int minLoopTime) {
         
         synchronized (batchList) {
             
@@ -191,18 +170,18 @@ public class MakeDataCliApplication {
             
             if(isSendNow) {
                 
-                batchList.forEach(str2-> {
-                    batchList2.add(str2);
-                });
+                batchList.forEach(str2-> 
+                    batchList2.add(str2)
+                );
                 
-                doBatch(restHighLevelClient,batchList2);
+                doBatch(restHighLevelClient,batchList2, minLoopTime);
                 batchList.clear();
             }
             
         }
     }
     
-    private static  void doBatch(RestHighLevelClient restHighLevelClient,List<PhoneDataInfoBO> list) {
-        Future<List<PhoneDataInfoBO>> futureA = executorService.submit(new BatchInsertEsCallable(restHighLevelClient, configProp.getEsIndex(), configProp.getEsType(),list,0));
+    private static  void doBatch(RestHighLevelClient restHighLevelClient,List<PhoneDataInfoBO> list, int minLoopTime) {
+        executorService.submit(new BatchInsertEsCallable(restHighLevelClient, configProp.getEsIndex(), configProp.getEsType(),list,0, minLoopTime));
     }
 }

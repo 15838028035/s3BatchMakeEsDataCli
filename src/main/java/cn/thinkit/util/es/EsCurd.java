@@ -358,7 +358,7 @@ public class EsCurd {
                 }
             };
             
-            if(bulkRequest.requests().size()>0) {
+            if(!bulkRequest.requests().isEmpty()) {
             	restHighLevelClient.bulkAsync(bulkRequest, RequestOptions.DEFAULT, listener);
             }
             
@@ -383,7 +383,7 @@ public class EsCurd {
      *  批量插入
      *  2020/5/12 15:01
      */
-    public static  List<PhoneDataInfoBO> bulkInsertBulkResponse(RestHighLevelClient restHighLevelClient,String index, String type, List<PhoneDataInfoBO> phoneDataInfoBOList){
+    public static  List<PhoneDataInfoBO> bulkInsertBulkResponse(RestHighLevelClient restHighLevelClient,String index, String type, List<PhoneDataInfoBO> phoneDataInfoBOList , int minLoopTime){
         BulkRequest bulkRequest = new BulkRequest();
         
         ObjectMapper mapper = new ObjectMapper(MyJsonFactory.factory);
@@ -423,19 +423,18 @@ public class EsCurd {
                 @Override
                 public void onResponse(final BulkResponse bulkItemResponses) {
                     if (bulkItemResponses.hasFailures()) {
-                        GLogger.error("同步数据过程中Bulk操作存在失败情况{}");
+                        GLogger.error("同步数据过程中Bulk操作存在失败情况,同步批次： "+minLoopTime);
                     }else {
-                         GLogger.info("同步数据成功, 成功个数:{}", bulkItemResponses.getItems().length);
+                         GLogger.info("同步数据成功, 成功个数:{}, 同步批次：{} ", bulkItemResponses.getItems().length, minLoopTime);
                     }
                 }
                 @Override
                 public void onFailure(Exception e) {
-                    GLogger.error("", e);
-                    GLogger.error("同步数据过程中Bulk操作出现异常");
+                    GLogger.error("同步数据过程中Bulk操作出现异常同步批次： "+minLoopTime, e);
                 }
             };
             
-            if(bulkRequest.requests().size()>0) {
+            if(!bulkRequest.requests().isEmpty()) {
                 restHighLevelClient.bulkAsync(bulkRequest, RequestOptions.DEFAULT, listener);
             }
             

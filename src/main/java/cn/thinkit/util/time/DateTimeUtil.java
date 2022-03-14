@@ -79,8 +79,7 @@ public class DateTimeUtil {
      * @return 新的时间
      */
     public static LocalDateTime addNMinute(LocalDateTime dateTime, int mins) {
-        LocalDateTime newDateTime = dateTime.plusMinutes(mins);
-        return newDateTime;
+    	return  dateTime.plusMinutes(mins);
     }
 
     /**
@@ -91,8 +90,7 @@ public class DateTimeUtil {
      * @return 新的日期
      */
     public static LocalDate addNDay(LocalDate date, int days) {
-        LocalDate newDate = date.plusDays(days);
-        return newDate;
+    	return date.plusDays(days);
     }
 
     /**
@@ -103,8 +101,7 @@ public class DateTimeUtil {
      * @return true：时间1在时间2之前；false：时间1在时间2之后
      */
     public static boolean isBefore(LocalTime time1, LocalTime time2) {
-        boolean flag = time1.isBefore(time2);
-        return flag;
+    	return time1.isBefore(time2);
     }
 
     /**
@@ -115,7 +112,6 @@ public class DateTimeUtil {
      * @return true：日期1等于日期2；false：日期1不等于日期2
      */
     public static boolean isEquals(LocalDate date1, LocalDate date2) {
-        boolean flag = date1.isEqual(date2);
-        return flag;
+    	return  date1.isEqual(date2);
     }
 }
