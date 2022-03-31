@@ -1,12 +1,10 @@
 package cn.thinkit;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cn.thinkit.config.ConfigProp;
 import cn.thinkit.controller.BatchInsertEsCallable;
 import cn.thinkit.entity.bo.PhoneDataInfoBO;
+import cn.thinkit.util.BeanCopierUtil;
 import cn.thinkit.util.GLogger;
 import cn.thinkit.util.GenerateSequenceUtil;
 import cn.thinkit.util.MyJsonFactory;
@@ -139,8 +138,10 @@ public class MakeDataCliApplication {
             phoneDataInfoBO2My = new PhoneDataInfoBO();
             
             try {
-				BeanUtils.copyProperties(phoneDataInfoBO2My, phoneDataInfoBO);
-			} catch (IllegalAccessException | InvocationTargetException e) {
+				
+				BeanCopierUtil.copy(phoneDataInfoBO, phoneDataInfoBO2My);
+			} catch (Exception e) {
+				
 				e.printStackTrace();
 			}
             

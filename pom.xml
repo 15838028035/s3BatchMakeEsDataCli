@@ -47,13 +47,12 @@
             <artifactId>classmate</artifactId>
             <version>1.2.0</version>
         </dependency>
-        
-       <dependency>
-         <groupId>commons-beanutils</groupId>
-         <artifactId>commons-beanutils</artifactId>
-         <version>1.8.0</version>
-         <scope>compile</scope>
-      </dependency>
+      
+      <dependency>
+        <groupId>cglib</groupId>
+        <artifactId>cglib</artifactId>
+        <version>3.2.10</version>
+   	 </dependency>
 
 
         <!-- 加入 elasticsearch6.5.4 的依赖-->
