@@ -61,7 +61,7 @@ public class MakeDataCliApplication {
             
             // 若索引不存在则创建索引并进行mapping
             if (!EsCurd.indexExists(restHighLevelClient,idx)) {
-                EsCurd.createIndex(restHighLevelClient,idx,40,1);
+                EsCurd.createIndex(restHighLevelClient,idx,40,0);
                 EsCurd.formatMapping(restHighLevelClient, idx, type);
             }
             

@@ -45,7 +45,7 @@ public class BatchInsertEsCallable  implements Callable<List<PhoneDataInfoBO>> {
 	            }
 	        }
 		    
-			return EsCurd.bulkInsertBulkResponse(restHighLevelClient, index, type, phoneDataInfoBOList, minLoopTime);
+			return EsCurd.bulkInsertBulkResponse2(restHighLevelClient, index, type, phoneDataInfoBOList, minLoopTime);
 			
 		}catch(Exception e) {
 			e.printStackTrace();

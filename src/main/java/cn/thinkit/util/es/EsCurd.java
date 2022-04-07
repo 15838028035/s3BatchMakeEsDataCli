@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchStatusException;
@@ -15,6 +16,7 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -31,6 +33,7 @@ import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -445,6 +448,68 @@ public class EsCurd {
              return new ArrayList<>();
         }
         
+    }
+    
+    /**
+     * 支持传入index，前提是必须已经mapping
+     *
+     *  批量插入
+     *  2020/5/12 15:01
+     */
+    public static  List<PhoneDataInfoBO> bulkInsertBulkResponse2(RestHighLevelClient restHighLevelClient,String index, String type, List<PhoneDataInfoBO> phoneDataInfoBOList , int minLoopTime){
+        BulkRequest bulkRequest = new BulkRequest();
+        
+        ObjectMapper mapper = new ObjectMapper(MyJsonFactory.factory);
+        
+        BiConsumer<BulkRequest, ActionListener<BulkResponse>> bulkConsumer =
+                (request, bulkListener) -> restHighLevelClient.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
+
+                BulkProcessor  bulkProcessor =   BulkProcessor.builder(bulkConsumer, new BulkProcessor.Listener() {
+
+            @Override
+            public void beforeBulk(long executionId, BulkRequest request) {
+            	GLogger.info("插入数据批次:{}",String.valueOf(minLoopTime));
+            }
+
+            @Override
+            public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+            	GLogger.info("写入完成批次:{}",String.valueOf(minLoopTime));
+            }
+
+            @Override
+            public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
+            	GLogger.error("写入异常批次:"+String.valueOf(minLoopTime));
+
+            }
+        }).setBulkActions(100).setFlushInterval(TimeValue.timeValueSeconds(10)).build();
+                
+        if(phoneDataInfoBOList!=null) {
+            phoneDataInfoBOList.forEach(phoneDataInfoBO-> {
+                String serialNumber = phoneDataInfoBO.getSerialNumber();
+                
+                try {
+                    String json = mapper.writeValueAsString(phoneDataInfoBO);
+                    
+                    GLogger.info("json:{}",json);
+                     /** bulkRequest.add( new IndexRequest(index, type, serialNumber).source(json, XContentType.JSON)); */
+                    
+                    IndexRequest indexRequest =   new IndexRequest(index, type, serialNumber).source(json, XContentType.JSON);
+                     
+                    // upsert--id不存在时就插入
+                    UpdateRequest updateRequest = new UpdateRequest(index,type,serialNumber).doc(json, XContentType.JSON).upsert(indexRequest);
+                    
+                     bulkRequest.add(updateRequest);
+                     
+                     bulkProcessor.add(updateRequest);
+                } catch (JsonProcessingException e) {
+                    GLogger.error("json转换异常{}",e);
+                } catch (Exception e) {
+                    GLogger.error("ES批量插入出现异常{}",e);
+                }
+            });
+        }
+        
+        return phoneDataInfoBOList;
     }
     
     /**
