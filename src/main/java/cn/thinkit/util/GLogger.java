@@ -51,12 +51,9 @@ public class GLogger {
   public static void info(String s, Object... arguments) {
 	  
 	  String formattedMessage = "";
-      if (arguments != null) {
-          if (arguments != null && arguments.length > 0) {
-        	  formattedMessage = String.format(s.replace("{}", "%s"), arguments);
-          }
-          
-      } else {
+      if (arguments != null && arguments.length > 0) {
+    	  formattedMessage = String.format(s.replace("{}", "%s"), arguments);
+      }   else {
           formattedMessage = s;
       }
       
@@ -133,7 +130,7 @@ public class GLogger {
 	  System.out.println(msg);
   }
   
-  private static void printlnErrorInfo(String msg) {
+  public static void printlnErrorInfo(String msg) {
 	  System.err.println(msg);
   }
 }

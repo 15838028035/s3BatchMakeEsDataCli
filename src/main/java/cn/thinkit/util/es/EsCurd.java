@@ -478,7 +478,7 @@ public class EsCurd {
 
             @Override
             public void afterBulk(long executionId, BulkRequest request, Throwable failure) {
-            	GLogger.error("写入异常批次:"+String.valueOf(minLoopTime));
+            	GLogger.error("写入异常批次:"+minLoopTime);
 
             }
         }).setBulkActions(100).setFlushInterval(TimeValue.timeValueSeconds(10)).build();

@@ -13,7 +13,7 @@ public class DateFormatUtil {
 
     private static SimpleDateFormat sdf;
 
-    public static Date Str2Date(String str) {
+    public static Date str2Date(String str) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
@@ -24,7 +24,7 @@ public class DateFormatUtil {
         return date;
     }
 
-    public static Date StrToDate(String str) {
+    public static Date strToDate(String str) {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         try {
@@ -35,7 +35,7 @@ public class DateFormatUtil {
         return date;
     }
 
-    public static String DateToStr(Date date) {
+    public static String dateToStr(Date date) {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format.format(date);
@@ -121,14 +121,14 @@ public class DateFormatUtil {
      * @param format 与需要转换成日期的字符串相匹配的格式
      * @return
      */
-    public static Date stringToDate(String _date, String format) {
+    public static Date stringToDate(String dateStr, String format) {
         if (null == format || "".equals(format)) {
             format = "yyyy-MM-dd HH:mm:ss";
         }
         sdf = new SimpleDateFormat(format);
         Date date = null;
         try {
-            date = sdf.parse(_date);
+            date = sdf.parse(dateStr);
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -180,13 +180,9 @@ public class DateFormatUtil {
             Calendar appoint = Calendar.getInstance();
             appoint.setTime(date);
             Calendar toDay = Calendar.getInstance();
-            if (toDay.get(Calendar.YEAR) == appoint.get(Calendar.YEAR)
+           return  (toDay.get(Calendar.YEAR) == appoint.get(Calendar.YEAR)
                     && toDay.get(Calendar.MONTH) == appoint.get(Calendar.MONTH)
-                    && toDay.get(Calendar.DAY_OF_MONTH) == appoint.get(Calendar.DAY_OF_MONTH)) {
-                return true;
-            } else {
-                return false;
-            }
+                    && toDay.get(Calendar.DAY_OF_MONTH) == appoint.get(Calendar.DAY_OF_MONTH)) ;
         }
     }
 
@@ -231,9 +227,9 @@ public class DateFormatUtil {
         long time1 = cal.getTimeInMillis();
         cal.setTime(date2);
         long time2 = cal.getTimeInMillis();
-        long between_mins = (time2 - time1) / (1000);
+        long betweenMins = (time2 - time1) / (1000);
 
-        return Integer.parseInt(String.valueOf(between_mins));
+        return Integer.parseInt(String.valueOf(betweenMins));
     }
 
     /**
@@ -249,9 +245,8 @@ public class DateFormatUtil {
         long time1 = cal.getTimeInMillis();
         cal.setTime(date2);
         long time2 = cal.getTimeInMillis();
-        long between_mins = (time2 - time1) / (1000 * 60);
-
-        return Integer.parseInt(String.valueOf(between_mins));
+        long betweenMins = (time2 - time1) / (1000 * 60);
+        return Integer.parseInt(String.valueOf(betweenMins));
     }
 
     /**
@@ -268,9 +263,9 @@ public class DateFormatUtil {
         long time1 = cal.getTimeInMillis();
         cal.setTime(date2);
         long time2 = cal.getTimeInMillis();
-        long between_days = (time2 - time1) / (1000 * 3600 * 24);
+        long betweenDays = (time2 - time1) / (1000 * 3600 * 24);
 
-        return Integer.parseInt(String.valueOf(between_days));
+        return Integer.parseInt(String.valueOf(betweenDays));
     }
 
     /**

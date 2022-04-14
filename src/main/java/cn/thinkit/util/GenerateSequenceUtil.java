@@ -22,7 +22,7 @@ public class GenerateSequenceUtil {
     private static final FieldPosition HELPER_POSITION = new FieldPosition(0);
     
     /** 时间：精确到秒 */
-    private static final  Format dateFormat = new SimpleDateFormat("YYYYMMddHHmmss");
+    private static final  Format dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     
     private static final  NumberFormat numberFormat = new DecimalFormat("00000");
     

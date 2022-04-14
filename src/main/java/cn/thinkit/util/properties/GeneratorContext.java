@@ -25,8 +25,8 @@ public class GeneratorContext {
   static ThreadLocal<Properties> generatorProperties = new ThreadLocal<>();
 
   public static void clear() {
-    context.set(null);
-    generatorProperties.set(null);
+    context.remove();
+    generatorProperties.remove();
   }
 
   public static Map<Object,Object> getContext() {

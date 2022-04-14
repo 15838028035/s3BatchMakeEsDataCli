@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.logging.Log;
@@ -200,7 +199,7 @@ public class FileUtil {
         return fileContent.toString();
     }
 
-    public static byte[] readStreamToByte(InputStream stream) throws UnsupportedEncodingException {
+    public static byte[] readStreamToByte(InputStream stream)  {
         String fileContent = readStreamToString(stream);
         return fileContent.getBytes(StandardCharsets.UTF_8);
     }

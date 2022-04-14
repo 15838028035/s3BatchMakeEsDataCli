@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import org.elasticsearch.client.RestHighLevelClient;
 
 import cn.thinkit.entity.bo.PhoneDataInfoBO;
+import cn.thinkit.util.GLogger;
 import cn.thinkit.util.es.EsCurd;
 
 public class BatchInsertEsCallable  implements Callable<List<PhoneDataInfoBO>> {
@@ -38,7 +39,7 @@ public class BatchInsertEsCallable  implements Callable<List<PhoneDataInfoBO>> {
 		try {
 		    if(delayForNextThreadInMillis>0) {
 	            try {
-	                System.out.println("run sleep " + delayForNextThreadInMillis);
+	                GLogger.info("run sleep {} ", delayForNextThreadInMillis);
 	                Thread.sleep(delayForNextThreadInMillis);
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
