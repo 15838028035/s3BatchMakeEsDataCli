@@ -20,6 +20,10 @@ public class ClientFactory {
     private static ConfigProp configProp = (ConfigProp) ApplicationProperties.getProperties().get("configProp");
 
     private static List<HttpHost> hosts;
+    
+    private ClientFactory() {
+    	// 空构造
+    }
 
     static {
         hosts = new ArrayList<>();

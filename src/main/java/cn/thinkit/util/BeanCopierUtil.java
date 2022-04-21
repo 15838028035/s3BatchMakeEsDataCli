@@ -11,6 +11,10 @@ public class BeanCopierUtil {
      * BeanCopier的缓存
      */
     static final ConcurrentHashMap<String, BeanCopier> BEAN_COPIER_CACHE = new ConcurrentHashMap<>();
+    
+    private BeanCopierUtil() {
+    	// 空构造
+    }
  
     /**
      * BeanCopier的copy

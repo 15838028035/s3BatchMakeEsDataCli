@@ -54,6 +54,10 @@ import cn.thinkit.util.MyJsonFactory;
  *
  */
 public class EsCurd {
+	
+	private EsCurd() {
+		// null
+	}
 
     /**
      * 检查索引是否存在

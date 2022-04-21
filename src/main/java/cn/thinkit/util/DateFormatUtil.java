@@ -12,6 +12,10 @@ import java.util.Date;
 public class DateFormatUtil {
 
     private static SimpleDateFormat sdf;
+    
+    private DateFormatUtil() {
+    	// 空
+    }
 
     public static Date str2Date(String str) {
         Date date = new Date();

@@ -4,6 +4,10 @@ package cn.thinkit.constant;
  * 公共常量
  */
 public class CommonConstant {
+	
+	private CommonConstant() {
+		//空构造
+	}
 
     /**
      * 换行符-Linux

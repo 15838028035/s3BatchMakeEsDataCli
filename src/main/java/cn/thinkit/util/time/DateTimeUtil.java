@@ -7,14 +7,14 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * 时间工具类
- *
- * @author huzenghui
- * @date 2020/12/16
  */
 public class DateTimeUtil {
     private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+    private DateTimeUtil( ) {
+    	// null
+    }
     /**
      * 根据传入格式格式化当前时间
      *

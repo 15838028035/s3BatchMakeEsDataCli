@@ -8,10 +8,12 @@ import java.net.URL;
 /**
  * http请求工具类
  *
- * @author huzenghui
- * @date 2020/12/26
  */
 public class HttpUtil {
+	
+	private HttpUtil() {
+		// null
+	}
 
     /**
      * 发送请求

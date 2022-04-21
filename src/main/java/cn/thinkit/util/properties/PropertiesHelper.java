@@ -120,7 +120,7 @@ public class PropertiesHelper {
 		return p.entrySet();
 	}
 
-	public Enumeration<?> propertyNames() {
+	public Enumeration propertyNames() {
 		return p.propertyNames();
 	}
 
@@ -128,16 +128,14 @@ public class PropertiesHelper {
 		Properties properties = new Properties();
 		for (String f : files) {
 			File file = FileHelper.getFile(f);
-			InputStream input = new FileInputStream(file);
-			try {
+			
+			try (InputStream input = new FileInputStream(file);) {
 				if (file.getPath().endsWith(".xml")) {
 					properties.loadFromXML(input);
 				} else {
 					properties.load(input);
 				}
 				properties.putAll(properties);
-			} finally {
-				input.close();
 			}
 		}
 		return properties;

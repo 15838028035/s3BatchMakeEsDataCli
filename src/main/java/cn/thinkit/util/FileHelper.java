@@ -129,12 +129,13 @@ public class FileHelper {
       if (file.isDirectory())
         cleanDirectory(file);
     } catch (Exception e) {
+    	return false;
     }
     try {
       return file.delete();
     } catch (Exception e) {
+    	return false;
     }
-    return false;
   }
 
   public static void cleanDirectory(File directory) throws IOException {

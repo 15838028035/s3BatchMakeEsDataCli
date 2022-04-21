@@ -8,6 +8,9 @@ import java.util.concurrent.Callable;
  */
 public class ThreadPoolMDCFilter {
  
+	private ThreadPoolMDCFilter() {
+		
+	}
  
     public static <T> Callable<T> wrap(final Callable<T> callable, final Map<String, String> context) {
         return () -> {
